@@ -52,7 +52,7 @@ public class HTTPMonitoringInterceptor implements HandlerInterceptor {
             httpServletResponse, Object o, ModelAndView modelAndView) throws Exception {
         long start = (long) httpServletRequest.getAttribute(startTimeKey);
         long elapsed = System.nanoTime() - start;
-        double seconds = (double) elapsed / 1000000000.0;
+        double seconds = elapsed / 1000000000.0;
         String matchedUrl = getMatchingURLPattern(httpServletRequest);
         if (!matchedUrl.equals("")) {
             requestLatency.labels(
