@@ -19,6 +19,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class HTTPMonitoringInterceptor implements HandlerInterceptor {
+    private final ResourceMappings mappings;
+    private final JpaHelper jpaHelper;
+    private final RepositoryRestConfiguration repositoryConfiguration;
+    private final ApplicationContext applicationContext;
+    private final RequestMappingHandlerMapping requestMappingHandlerMapping;
     static final Histogram requestLatency = Histogram.build()
             .name("request_duration_seconds")
             .help("Request duration in seconds.")
@@ -26,16 +31,18 @@ public class HTTPMonitoringInterceptor implements HandlerInterceptor {
             .register();
 
     private static final String startTimeKey = "startTime";
-    @Autowired
-    ResourceMappings mappings;
-    @Autowired
-    JpaHelper jpaHelper;
-    @Autowired
-    RepositoryRestConfiguration repositoryConfiguration;
-    @Autowired
-    ApplicationContext applicationContext;
-    @Autowired
-    RequestMappingHandlerMapping requestMappingHandlerMapping;
+    public HTTPMonitoringInterceptor(
+            ResourceMappings mappings,
+            JpaHelper jpaHelper,
+            RepositoryRestConfiguration repositoryConfiguration,
+            ApplicationContext applicationContext,
+            RequestMappingHandlerMapping requestMappingHandlerMapping) {
+        this.mappings = mappings;
+        this.jpaHelper = jpaHelper;
+        this.repositoryConfiguration = repositoryConfiguration;
+        this.applicationContext = applicationContext;
+        this.requestMappingHandlerMapping = requestMappingHandlerMapping;
+    }
     private Set<PatternsRequestCondition> urlPatterns;
     @Value("${spring.application.name:orders}")
     private String serviceName;

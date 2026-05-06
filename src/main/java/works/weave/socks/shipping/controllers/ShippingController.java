@@ -20,8 +20,12 @@ import java.util.Map;
 @RestController
 public class ShippingController {
 
+    private final RabbitTemplate rabbitTemplate;
+
     @Autowired
-    RabbitTemplate rabbitTemplate;
+    public ShippingController(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
 
     @RequestMapping(value = "/shipping", method = RequestMethod.GET)
     public String getShipping() {
