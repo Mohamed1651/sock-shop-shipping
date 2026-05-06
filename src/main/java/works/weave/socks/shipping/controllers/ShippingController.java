@@ -1,6 +1,7 @@
 package works.weave.socks.shipping.controllers;
 
 import com.rabbitmq.client.Channel;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.AmqpException;
 import org.springframework.amqp.rabbit.core.ChannelCallback;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import works.weave.socks.shipping.entities.HealthCheck;
 import works.weave.socks.shipping.entities.Shipment;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -19,7 +21,7 @@ import java.util.Map;
 
 @RestController
 public class ShippingController {
-
+    private static final Logger logger = LoggerFactory.getLogger(ShippingController.class);
     private final RabbitTemplate rabbitTemplate;
 
     @Autowired
@@ -42,11 +44,11 @@ public class ShippingController {
     public
     @ResponseBody
     Shipment postShipping(@RequestBody Shipment shipment) {
-        System.out.println("Adding shipment to queue...");
+        logger.info("Adding shipment to queue...");
         try {
             rabbitTemplate.convertAndSend("shipping-task", shipment);
         } catch (Exception e) {
-            System.out.println("Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this " +
+            logger.info("Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this " +
                     "for real!");
         }
         return shipment;
